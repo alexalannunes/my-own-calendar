@@ -27,7 +27,6 @@ const showCalendar = (year, month) => {
 
   for (let row = 0; row < new Date(year, month).getWeekOfMonth(); row++) {
     const rowTR = document.createElement('tr');
-    console.log(rowTR);
 
     for (let column = 0; column < 7; column++) {
 
