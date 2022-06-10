@@ -1,66 +1,63 @@
-const tbody = document.getElementById("tbody");
-const SEMANA = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-const date = new Date();
-let ANO = date.getFullYear();
-let MES = date.getMonth();
-const HOJE = date.getDate();
-const start = 1608433200000;
-const end = 1608865200000;
-
+const tbody = document.getElementById('tbody');
 const previois = document.getElementById("previous");
 const next = document.getElementById("next");
 
-function diasMes(ano, mes) {
-  return 32 - new Date(ano, mes, 32).getDate();
+const date = new Date();
+
+const YEAR = date.getFullYear();
+let MONTH = date.getMonth();
+const TODAY = date.getDate();
+
+const lastDayOfMonth = (year, month) => {
+  return 32 - new Date(year, month, 32).getDate()
 }
 
-function showCalendar(ano, mes) {
-  tbody.innerHTML = "";
-  // primeiro dia da semana
-  let primeiroDia = new Date(ano, mes).getDay();
+Date.prototype.getWeekOfMonth = function () {
+  var firstDay = new Date(this.setDate(1)).getDay();
+  var totalDays = new Date(this.getFullYear(), this.getMonth() + 1, 0).getDate();
+  return Math.ceil((firstDay + totalDays) / 7);
+}
 
-  let date = 1;
+const showCalendar = (year, month) => {
+  tbody.innerHTML = '';
 
-  for (let i = 0; i < 6; i++) {
-    // cria uma row
-    const row = document.createElement("tr");
+  const firstDayOfWeek = new Date(year, month).getDay();
 
-    // cria as celulas preechendo com as data
-    for (let j = 0; j < 7; j++) {
-      // preenche com vazio as datas antes
-      if (i === 0 && j < primeiroDia) {
-        const cell = document.createElement("td");
-        cell.textContent = "";
-        row.appendChild(cell);
-      } else if (date > diasMes(ano, mes)) {
-        break;
-      } else {
-        const cell = document.createElement("td");
-        cell.textContent = date;
-        const time = new Date(ano, mes, date).getTime();
-        cell.setAttribute("data-date", time);
-        if (date == HOJE) {
-          cell.style.background = "red";
-        }
-        if (time >= start && time < end) {
-          cell.style.background = "#09c";
-        }
-        row.appendChild(cell);
-        date++;
+  let dateCount = 1;
+
+  for (let row = 0; row < new Date(year, month).getWeekOfMonth(); row++) {
+    const rowTR = document.createElement('tr');
+    console.log(rowTR);
+
+    for (let column = 0; column < 7; column++) {
+
+      if (row === 0 && column < firstDayOfWeek) {
+        const columnTD = document.createElement('td');
+        columnTD.textContent = '';
+        rowTR.append(columnTD);
       }
+      else if (dateCount > lastDayOfMonth(year, month)) {
+        break;
+      }
+      else {
+        const columnTD = document.createElement("td");
+        columnTD.textContent = dateCount;
+        rowTR.appendChild(columnTD);
+        dateCount++;
+      }
+
     }
 
-    tbody.appendChild(row);
+    tbody.append(rowTR);
   }
 }
 
-showCalendar(ANO, MES);
-
+showCalendar(YEAR, MONTH);
 previois.addEventListener("click", function () {
-  MES -= 1;
-  showCalendar(ANO, MES);
+  MONTH -= 1;
+  showCalendar(YEAR, MONTH);
 });
 next.addEventListener("click", function () {
-  MES += 1;
-  showCalendar(ANO, MES);
+  MONTH += 1;
+  showCalendar(YEAR, MONTH);
 });
